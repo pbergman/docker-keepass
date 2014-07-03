@@ -1,0 +1,38 @@
+#!/bin/bash
+
+xhost +
+
+KP_DB=/home/philip/NetworkShares/zon/projecten/ZZtechniek_techniek/KeePass/sites.kdbx
+
+CID=$(sudo docker ps -la | grep keepass)
+
+function attach()
+{
+	sudo docker attach $1
+}
+
+
+if [[ "$CID" ]]; then
+	
+
+	if [[ $(echo $CID | grep -i "exited") ]]; then
+		echo "restarting conatiner $(sudo docker start $(echo $CID | awk '{print $1}'))"		
+	else
+		echo "container running $(echo $CID | awk '{print $1}')"
+	fi 
+
+	attach $(echo $CID | awk '{print $1}')
+
+else
+
+    echo "Starting conatiner"
+
+    CID=$(sudo docker run -v /tmp/.X11-unix:/tmp/.X11-unix \
+                          -v $KP_DB:/home/keepass/database/db.kdbx \
+                          -e DISPLAY=unix$DISPLAY \
+                          --name keepass \
+                          -dit pbergman/keepass /bin/bash)
+	attach $CID
+fi
+
+
