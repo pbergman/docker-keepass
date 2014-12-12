@@ -27,4 +27,4 @@
 #
 ####
 keepass:
-  database: /home/keepass/database/db.kdbx
+  database: /home/keepass/database/sites.kdbx
